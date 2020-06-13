@@ -23,7 +23,7 @@ def print_room_items(room):
 def print_inventory_items(inventory):
 	if inventory != []:
 		for item in inventory:
-			print("DROP "+item["name"])
+			print("DROP "+item["id"])
 
 	print("\nYou have " + list_of_items(inventory),"\n")
 
@@ -41,29 +41,28 @@ def print_exit(direction, leads_to):
 
 def print_menu(exits, room_items, inv_items):
 
-	print_room_items(current_room)
-	print("\nYou can:")
-	for direction in exits:
-		print_exit(direction, exit_leads_to(exits, direction))
-	if current_room["items"] != []:
-		for item in current_room["items"]:
-			print ("TAKE "+item["name"])
+    print_room_items(current_room)
+    print("\nYou can:")
+    for direction in exits:
+        print_exit(direction, exit_leads_to(exits, direction))
+    print()
+    if current_room["items"] != []:
+        for item in current_room["items"]:
+            print ("TAKE "+item["id"])
+        print()
 
-	print_inventory_items(inventory)
-
-	print("What do you want to do?")
+    print_inventory_items(inventory)
+    print("What do you want to do?")
 
 def is_valid_exit(exits, chosen_exit):
-
     choice = False
     for exit in exits:
         if exit == chosen_exit:
             choice = True
     return choice
 
-def is_pickup_valid(inventory, items):
-	for i in range(len(current_room["items"])):
-		print(i)
+def is_pickup_valid(inventory, item):
+    return False
 
 def execute_go(direction):
 	global current_room
@@ -73,31 +72,36 @@ def execute_go(direction):
 		print("You cannot go there")
 
 def execute_take(item_id):
-	take_item = False
-	for i in range(len(current_room["items"])):
-		print(current_room["items"][i]["id"])
-		if current_room["items"][i] == item_id:
-			if is_pickup_valid(inventory, items) == True:
-				take_item = True
-				current_room["items"].remove(items)
-				inventory.append(items)
-				print(item_id, " added to inventory")
+    take_item = False
+    for i in range(len(current_room["items"])):
+        if current_room["items"][i]["id"] == item_id:
+            take_item = True
 
-	if take_item == False:
-		print("You cannot take that")
+            inventory.append(current_room["items"][i])
+            current_room["items"].remove(current_room["items"][i])
+
+            print(item_id, " added to inventory")
+
+            return True
+
+    if take_item == False:
+        print("You cannot take that")
+        return False
 
 def execute_drop(item_id):
-
     drop_item = False
     for i in range(len(inventory)):
-        if item_id == items["id"]:
+        if item_id == inventory[i]["id"]:
             drop_item = True
-            inventory.remove(items)
-            current_room["items"].append(items)
-            print(items["name"] + " dropped")
+
+            current_room["items"].append(inventory[i])
+            inventory.remove(inventory[i])
+            print(item_id + " dropped")
+            return True
 
     if drop_item == False:
         print("You cannot drop that")
+        return False
 
 def execute_command(command):
 
@@ -138,13 +142,12 @@ def move(exits, direction):
     return rooms[exits[direction]]
 
 def main():
-	while True:
-		time.sleep(1.5)
-		clear()
-		print_room(current_room)
-
-		command = menu(current_room["exits"], current_room["items"], inventory)
-		execute_command(command)
+    while True:
+        time.sleep(1.5)
+        clear()
+        print_room(current_room)
+        command = menu(current_room["exits"], current_room["items"], inventory)
+        execute_command(command)
 
 if __name__ == "__main__":
     main()
