@@ -1,8 +1,36 @@
+import csv
+import string
 import pygame
 
 
-def draw_grid(win, x, y, width, height, grid):
+def no_punct(text):
+    no_punct = ""
+    for char in text:
+        if not (char in string.punctuation):
+            no_punct = no_punct + char
+    return no_punct
 
+
+def read_grid():
+    new_grid = []
+    row = []
+    with open('map.csv', 'r') as csvfile:
+        r = csv.reader(csvfile)
+        for i in range(0, 15):
+            if row != []:
+                new_grid.append(row)
+                row = []
+            field = next(r)
+            for i in field:
+                values = no_punct(i).split()
+                new_row = [(int(values[0]),int(values[1]),int(values[2])), int(values[3]), int(values[4])]
+                row.append(new_row)
+
+    new_grid.append(row)
+    return new_grid
+
+
+def draw_grid(win, x, y, width, height, grid):
     for row in grid:
         for col in row:
             pygame.draw.rect(win, col[0], (col[1], col[2], width, height))
@@ -10,7 +38,7 @@ def draw_grid(win, x, y, width, height, grid):
     pygame.display.update()
 
 
-def paint(win, width, height, pos, button):
+def paint(win, width, height, pos, button, grid):
     selected_square = pos
     for row in grid:
         for col in row:
@@ -25,45 +53,53 @@ def paint(win, width, height, pos, button):
 
 
 def main():
-    global grid
-    win = pygame.display.set_mode((800,600))
-    pygame.display.set_caption('Map Builder')
-    win.fill((0, 0, 0))
     x = 0
     y = 0
     width = 40
     height = 40
     velocity = 40
-    grid = [[[(255,255,255), x, y] for x in range(0, win.get_size()[0], width)] for y in range(0, win.get_size()[1], height)]
-    draw_grid(win, x, y, width, height)
+    win = pygame.display.set_mode((800,600))
+    pygame.display.set_caption('Map Builder')
+    grid = read_grid()
+    win.fill((0, 0, 0))
+    draw_grid(win, x, y, width, height, grid)
     selected = (0,0)
     running = True
     drawing = False
 
     while running:
-        pygame.time.delay(100)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            # if event.type == pygame.MOUSEMOTION:
-            #     hover(win, width, height, pygame.mouse.get_pos())
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 button = event.button
-                paint(win, width, height, pygame.mouse.get_pos(), event.button)
+                paint(win, width, height, pygame.mouse.get_pos(), event.button, grid)
                 pressed = True
                 while pressed:
                     for e in pygame.event.get():
                         if e.type != pygame.MOUSEBUTTONUP:
-                            paint(win, width, height, pygame.mouse.get_pos(), button)
-                        elif e.type == pygame.MOUSEBUTTONUP:
+                            paint(win, width, height, pygame.mouse.get_pos(), button, grid)
+                        if e.type == pygame.MOUSEBUTTONUP:
                             pressed = False
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
-            print(grid)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    filename = 'map.csv'
+                    with open(filename, 'w') as csvfile:
+                        w = csv.writer(csvfile)
+                        w.writerows(grid)
+                    print('Saved map')
 
-        draw_grid(win, x, y, width, height)
+                if event.key == pygame.K_r:
+                    grid = [[[(255,255,255), x, y] for x in range(0, win.get_size()[0], width)] for y in
+                            range(0, win.get_size()[1], height)]
+                    print('Reset map')
+
+        draw_grid(win, x, y, width, height, grid)
         pygame.display.update()
+
+        pygame.time.delay(100)
 
 
 if __name__ == "__main__":

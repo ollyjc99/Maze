@@ -1,9 +1,11 @@
+import csv
 import pygame
 from mapper import *
 from multiprocessing import Process
 
 def main():
     global grid
+    filename = 'map.csv'
     win = pygame.display.set_mode((800,600))
     pygame.display.set_caption('First Game')
     win.fill((0, 0, 0))
@@ -24,9 +26,10 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.KEYDOWN:
-                print(event.key)
+            # if event.type == pygame.KEYDOWN:
+            #     print(event.key)
         keys = pygame.key.get_pressed()
+
         if keys[pygame.K_LEFT]:
             print("Left key")
             x -= velocity
@@ -55,7 +58,7 @@ def main():
         pygame.draw.rect(win, (255, 0, 0), (x, y, width, height))
         pygame.display.update()
         pygame.time.delay(100)
-
+    pygame.quit()
 
 if __name__ == "__main__":
     pygame.init()
