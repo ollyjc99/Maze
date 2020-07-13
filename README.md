@@ -1,4 +1,4 @@
-# myGame
+# Flea 2020
 
-#####Pygame Application to develop my coding skills
+#####An attempt to recreate the popular Flea game in python to develop my coding skills
  
