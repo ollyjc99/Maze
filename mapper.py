@@ -3,6 +3,28 @@ import string
 import pygame
 
 
+class Map(object):
+    def __init__(self, grid):
+        self.saved_map = self.read_map(grid)
+
+    def read_map(self, grid):
+        new_grid = []
+        row = []
+        with open('map.csv', 'r') as csvfile:
+            r = csv.reader(csvfile)
+            for i in range(0, 15):
+                if row:
+                    new_grid.append(row)
+                    row = []
+                field = next(r)
+                for i in field:
+                    values = no_punct(i).split()
+                    new_row = [(int(values[0]), int(values[1]), int(values[2])), int(values[3]), int(values[4])]
+                    row.append(new_row)
+
+        new_grid.append(row)
+        return new_grid
+
 def no_punct(text):
     no_punct = ""
     for char in text:

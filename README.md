@@ -1,4 +1,3 @@
-# Flea 2020
+# A GAME
 
-#####An attempt to recreate the popular Flea game in python to develop my coding skills
- 
+#####An attempt to make any kind of game just work PLEASE
