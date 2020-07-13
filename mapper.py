@@ -34,7 +34,6 @@ def draw_grid(win, x, y, width, height, grid):
     for row in grid:
         for col in row:
             pygame.draw.rect(win, col[0], (col[1], col[2], width, height))
-
     pygame.display.update()
 
 
@@ -84,16 +83,20 @@ def main():
                             pressed = False
 
             if event.type == pygame.KEYDOWN:
+
                 if event.key == pygame.K_SPACE:
                     filename = 'map.csv'
-                    with open(filename, 'w') as csvfile:
-                        w = csv.writer(csvfile)
-                        w.writerows(grid)
+                    with open(filename, 'w', newline='') as csvfile:
+                        writer = csv.writer(csvfile)
+                        writer.writerows(grid)
                     print('Saved map')
 
                 if event.key == pygame.K_r:
                     grid = [[[(255,255,255), x, y] for x in range(0, win.get_size()[0], width)] for y in
                             range(0, win.get_size()[1], height)]
+                    # for i in range(0, win.get_size[0], width):
+                    #     for x in range(0, win.get_size[1], width):
+                    #         print(i, x)
                     print('Reset map')
 
         draw_grid(win, x, y, width, height, grid)
