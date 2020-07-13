@@ -1,37 +1,52 @@
 import csv
 import pygame
+import time
 from mapper import *
 from multiprocessing import Process
 
 
-def collision_detect(win, width, pos, velocity, grid, key=None):
+def collision_detect(win, width, pos, velocity, grid):
     x = pos[0]+(1/2*width)
     y = pos[1]+(1/2*width)
-
     for row in grid:
         for col in row:
-            if col[1] <= x <= col[1] + width:
-                if col[2] <= y+width <= col[2] + width:
-                    print('y')
-                    if col[0] != (0,0,0):
-                        print('Whitespace')
-                        return False
-                    if col[0] == (0,0,0):
-                        print('Collision')
-                        return True
+            if pygame.Rect(col[1],col[2], width, width).collidepoint(x,y):
+                pass
 
-            if col[1] <= x+width <= col[1] + width:
-                if col[2] <= y <= col[2] + width:
-                    if col[0] != (0,0,0):
-                        print('Whitespace')
-                        return False
-                    elif col[0] == (0,0,0):
-                        print('Collision')
-                        return True
+            # Right Collision
+            if pygame.Rect(col[1], col[2], width, width).collidepoint(x+width, y):
+                if col[0] != (0,0,0):
+                    pass
+                elif col[0] == (0,0,0):
+                    print('Right collision')
+
+            # Left Collision
+            if pygame.Rect(col[1], col[2], width, width).collidepoint(x-width, y):
+                if col[0] != (0,0,0):
+                    pass
+                elif col[0] == (0,0,0):
+                    print('Left collision')
+
+            # Up Collision
+            if pygame.Rect(col[1], col[2], width, width).collidepoint(x, y-width):
+                if col[0] != (0,0,0):
+                    pass
+                elif col[0] == (0,0,0):
+                    return True
+
+            # Down Collision
+            if pygame.Rect(col[1], col[2], width, width).collidepoint(x, y+width):
+                if col[0] != (0,0,0):
+                    pass
+                elif col[0] == (0,0,0):
+                    print('Down collision')
+
 
 
 def main():
-    win = pygame.display.set_mode((800,600))
+    window_width = 800
+    window_height = 600
+    win = pygame.display.set_mode((window_width,window_height))
     pygame.display.set_caption('First Game')
     win.fill((0, 0, 0))
     x = 0
@@ -48,42 +63,74 @@ def main():
     pygame.draw.rect(win, (255, 0, 0), (x, y, width, height))
 
     while running:
-        pos = (y*1/2,x*1/2)
+        start = time.perf_counter()
         collision = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        keys = pygame.key.get_pressed()
 
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            collision_detect(win, width, (x, y), velocity, grid)
-            x -= velocity
-            if x < 0:
-                x = 0
+            for row in grid:
+                for col in row:
+                    if pygame.Rect(col[1], col[2], width, width).collidepoint(x-width, y):
+                        if col[0] != (0, 0, 0):
+                            x -= velocity
+                            if x < 0:
+                                x = 0
+                            break
+                        elif col[0] == (0, 0, 0):
+                            pass
 
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            collision_detect(win, width, (x, y), velocity, grid)
-            x += velocity
-            if x > win.get_size()[0] - width:
-                x = win.get_size()[0] - width
+            for row in grid:
+                for col in row:
+                    if pygame.Rect(col[1], col[2], width, width).collidepoint(x + width, y):
+                        if col[0] != (0, 0, 0):
+                            x += velocity
+                            if x > win.get_size()[0] - width:
+                                x = win.get_size()[0] - width
+                            break
+                        elif col[0] == (0, 0, 0):
+                            pass
 
         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            collision_detect(win, width, (x, y), velocity, grid)
-            y -= velocity
-            if y <= 0:
-                y = 0
+            for row in grid:
+                for col in row:
+                    if pygame.Rect(col[1], col[2], width, width).collidepoint(x, y-width):
+                        if col[0] != (0, 0, 0):
+                            y -= velocity
+                            if y <= 0:
+                                y = 0
+                            break
+                        elif col[0] == (0, 0, 0):
+                            pass
 
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            y += velocity
-            if y >= win.get_size()[1] - height:
-                y = win.get_size()[1] - height
+            for row in grid:
+                for col in row:
+                    if pygame.Rect(col[1], col[2], width, height).collidepoint((x*1/2)+width, (y*1/2)+height*2):
+                        print(col)
+                        print(x+(width*1/2))
+                        print((y*1/2)+height)
+                        if col[0] != (0, 0, 0):
+                            y += velocity
+                            if y >= win.get_size()[1] - height:
+                                y = win.get_size()[1] - height
+                            break
+                        elif col[0] == (0, 0, 0):
+                            pass
 
         collision_detect(win, width, (x, y), velocity, grid)
         draw_grid(win, x, y, width, height, grid)
         pygame.draw.rect(win, (255, 0, 0), (x, y, width, height))
         pygame.display.update()
+        finish = time.perf_counter()
+        print(f'Finished in {round(finish - start, 2)} second(s)')
         pygame.time.delay(100)
+
     pygame.quit()
+
 
 if __name__ == "__main__":
     pygame.init()

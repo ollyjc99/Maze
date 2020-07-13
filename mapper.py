@@ -39,12 +39,12 @@ def read_grid():
     with open('map.csv', 'r') as csvfile:
         r = csv.reader(csvfile)
         for i in range(0, 15):
-            if row != []:
+            if row:
                 new_grid.append(row)
                 row = []
             field = next(r)
-            for i in field:
-                values = no_punct(i).split()
+            for j in field:
+                values = no_punct(j).split()
                 new_row = [(int(values[0]),int(values[1]),int(values[2])), int(values[3]), int(values[4])]
                 row.append(new_row)
 
@@ -63,14 +63,13 @@ def paint(win, width, height, pos, button, grid):
     selected_square = pos
     for row in grid:
         for col in row:
-            if col[1] <= pos[0] <= col[1] + width:
-                if col[2] <= pos[1] <= col[2] + height:
-                    if button == 1:
-                        col[0] = (0,0,0)
-                    if button == 3:
-                        col[0] = (255,255,255)
-                    pygame.draw.rect(win, col[0], (col[1], col[2], width, height))
-                    pygame.display.update()
+            if pygame.Rect(col[1], col[2], width, height).collidepoint(pygame.mouse.get_pos()):
+                if button == 1:
+                    col[0] = (0,0,0)
+                if button == 3:
+                    col[0] = (255,255,255)
+                pygame.draw.rect(win, col[0], (col[1], col[2], width, height))
+                pygame.display.update()
 
 
 def main():
@@ -116,9 +115,6 @@ def main():
                 if event.key == pygame.K_r:
                     grid = [[[(255,255,255), x, y] for x in range(0, win.get_size()[0], width)] for y in
                             range(0, win.get_size()[1], height)]
-                    # for i in range(0, win.get_size[0], width):
-                    #     for x in range(0, win.get_size[1], width):
-                    #         print(i, x)
                     print('Reset map')
 
         draw_grid(win, x, y, width, height, grid)
