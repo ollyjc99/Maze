@@ -7,33 +7,48 @@ import threading
 
 
 class App(threading.Thread):
-    def __init__(self):
+    def __init__(self, win, width, height):
         threading.Thread.__init__(self)
         self.start()
+        self.win = win
+        self.width = width
+        self.height = height
+        self.options = load_maps()
 
     def quit(self):
         self.root.quit()
 
     def callback(self, value):
-        global e, new_window
+        global e
         if value <= 4:
             colour_picker(value)
         else:
             new_window = Toplevel(self.root)
             new_window.geometry("150x150+1385+450")
-            Label(new_window, text="Enter map name").pack(ipady=5)
+
+            Label(new_window, text="Enter map name")
             e = Entry(new_window)
+            b = Button(new_window, text="Save", command=self.save_grid)
+
+            Label.pack(ipady=5)
             e.pack()
-            b = Button(new_window, text="Save", command=self.get_val)
             b.pack(ipady=3)
 
-    def get_val(self):
+    def save_grid(self):
         save_grid(e.get())
+
+    def select_map(self, value):
+        selected_map=value
+        print(selected_map)
 
     def run(self):
         self.root = Tk()
         self.root.protocol("WM_DELETE_WINDOW", self.quit)
-        self.root.geometry("25x215+1400+450")
+        self.root.geometry("25x268+1400+425")
+        clicked = StringVar()
+        clicked.set(self.options[0])
+        lbl = Label(self.root, text="Current Map")
+        drop = OptionMenu(self.root, clicked, *self.options, command=self.select_map)
 
         rb1 = Button(self.root, text="Border Tile", background="light blue", command=lambda:self.callback(1))
         rb2 = Button(self.root, text="Floor Tile", background="light blue", command=lambda:self.callback(2))
@@ -42,6 +57,8 @@ class App(threading.Thread):
         rb5 = Button(self.root, text="Save", background="green", command=lambda: self.callback(5))
         rb6 = Button(self.root, text="Quit", background="red", foreground='white', command=self.root.destroy)
 
+        lbl.pack(fill=X)
+        drop.pack(fill=X)
         rb1.pack(fill=X, ipady=5)
         rb2.pack(fill=X, ipady=5)
         rb3.pack(fill=X, ipady=5)
@@ -52,6 +69,13 @@ class App(threading.Thread):
         self.root.mainloop()
 
 
+def load_maps():
+    maps = []
+    for file in os.listdir('maps/'):
+        maps.append(file)
+    return maps
+
+
 def no_punct(text):
     no_punct = ""
     for char in text:
@@ -60,12 +84,12 @@ def no_punct(text):
     return no_punct
 
 
-def read_grid():
+def read_grid(filename='level_1.csv'):
     new_grid = []
     row = []
     start = (0, 0)
     finish = (800, 600)
-    with open('map.csv', 'r') as csvfile:
+    with open('maps/'+filename, 'r') as csvfile:
         r = csv.reader(csvfile)
         for i in range(0, 15):
             if row:
@@ -86,24 +110,29 @@ def read_grid():
 
 def save_grid(value):
     filename = value + '.csv'
-    print('Saved', filename)
-    # with open(filename, 'w', newline='') as csvfile:
-    #     writer = csv.writer(csvfile)
-    #     writer.writerows(grid)
-    # print('Saved map')
+    current_maps = load_maps()
+    if filename not in current_maps:
+        current_maps.append(filename)
+
+        with open('maps/'+filename, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerows(grid)
+        print('Saved map')
+
+    print(current_maps)
 
 
-def draw_grid(win, width, height, grid):
-    for row in grid:
+def draw_grid(win, width, height, map):
+    for row in map:
         for col in row:
             pygame.draw.rect(win, col[0], (col[1], col[2], width, height))
     pygame.display.update()
     return
 
 
-def paint(win, width, height, pos, button, grid, colour):
+def paint(win, width, height, pos, button, map, colour):
     selected_square = pos
-    for row in grid:
+    for row in map:
         for col in row:
             if pygame.Rect(col[1], col[2], width, height).collidepoint(pygame.mouse.get_pos()):
                 if button == 1:
@@ -133,7 +162,8 @@ def colour_picker(value):
 
 
 def main():
-    global colour
+    global colour, grid, start, finish, selected_map, file_saved
+    maps = load_maps()
     colour = (245,205,222)
     width = 40
     height = 40
@@ -142,18 +172,25 @@ def main():
     colours = {'Border Tile': (245,205,222), 'Floor Tile': (251,247,213)}
 
     win = pygame.display.set_mode((800,600))
-    app = App()
+    app = App(win, width, height)
 
     pygame.display.set_caption('Map Builder')
-    grid, start, finish = read_grid()
+    selected_map = 'level_1.csv'
+    grid, start, finish = read_grid(selected_map)
     win.fill((0, 0, 0))
     draw_grid(win, width, height, grid)
     selected = (0,0)
+
     running = True
     drawing = False
+    load_file = False
 
     x, y = start
     while running:
+        if load_file:
+            grid = read_grid()[0]
+            load_file = False
+        print(selected_map)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -168,24 +205,6 @@ def main():
                             paint(win, width, height, pygame.mouse.get_pos(), button, grid, colour)
                         if e.type == pygame.MOUSEBUTTONUP:
                             pressed = False
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    paint(win, width, height, pygame.mouse.get_pos(), '32', grid)
-                if event.key == pygame.K_f:
-                    paint(win, width, height, pygame.mouse.get_pos(), 'f', grid)
-
-                if event.key == pygame.K_s:
-                    filename = 'map.csv'
-                    with open(filename, 'w', newline='') as csvfile:
-                        writer = csv.writer(csvfile)
-                        writer.writerows(grid)
-                    print('Saved map')
-
-                if event.key == pygame.K_r:
-                    grid = [[[(251,247,213), x, y] for x in range(0, win.get_size()[0], width)] for y in
-                            range(0, win.get_size()[1], height)]
-                    print('Reset map')
 
         draw_grid(win, width, height, grid)
         pygame.display.update()
