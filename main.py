@@ -2,7 +2,6 @@ import csv
 import pygame
 import time
 from mapper import *
-from multiprocessing import Process
 
 
 def main():
@@ -10,6 +9,8 @@ def main():
     window_height = 600
     win = pygame.display.set_mode((window_width,window_height))
     pygame.display.set_caption('First Game')
+
+    # Text-box
     font = pygame.font.Font('freesansbold.ttf', 32)
     text = font.render('You won!', True, (226,190,241))
     text_rect = text.get_rect()
@@ -23,11 +24,12 @@ def main():
     draw_grid(win, width, height, grid)
     x, y = start
     pygame.draw.rect(win, (204,225,242), (x, y, width, height))
-    running = True
-    start_state = (start)
+    start_state = start
     final_state = finish
+    running = True
+
     while running:
-        start = time.perf_counter()
+        time_start = time.perf_counter()
         if (x,y) == final_state:
             running = False
         for event in pygame.event.get():
@@ -36,7 +38,7 @@ def main():
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            pos = (x-width/2,y+height/2)
+            pos = (round(x-width/2),round(y+height/2))
             for row in grid:
                 for col in row:
                     if pygame.Rect(col[1], col[2], width, width).collidepoint(pos):
@@ -90,8 +92,8 @@ def main():
         draw_grid(win, width, height, grid)
         pygame.draw.rect(win, (204,225,242), (x, y, width, height))
         pygame.display.update()
-        finish = time.perf_counter()
-        print(f'Finished in {round(finish - start, 2)} second(s)')
+        time_finish = time.perf_counter()
+        print(f'Finished in {round(time_finish - time_start, 3)} second(s)')
         pygame.time.delay(100)
 
 
