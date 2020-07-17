@@ -2,71 +2,6 @@ import os
 import csv
 import string
 import pygame
-from tkinter import *
-import threading
-
-
-class App(threading.Thread):
-    def __init__(self, win, width, height):
-        threading.Thread.__init__(self)
-        self.start()
-        self.win = win
-        self.width = width
-        self.height = height
-        self.options = load_maps()
-
-    def quit(self):
-        self.root.quit()
-
-    def callback(self, value):
-        global e
-        if value <= 4:
-            colour_picker(value)
-        else:
-            new_window = Toplevel(self.root)
-            new_window.geometry("150x150+1385+450")
-
-            Label(new_window, text="Enter map name")
-            e = Entry(new_window)
-            b = Button(new_window, text="Save", command=self.save_grid)
-
-            Label.pack(ipady=5)
-            e.pack()
-            b.pack(ipady=3)
-
-    def save_grid(self):
-        save_grid(e.get())
-
-    def select_map(self, value):
-        selected_map=value
-        print(selected_map)
-
-    def run(self):
-        self.root = Tk()
-        self.root.protocol("WM_DELETE_WINDOW", self.quit)
-        self.root.geometry("25x268+1400+425")
-        clicked = StringVar()
-        clicked.set(self.options[0])
-        lbl = Label(self.root, text="Current Map")
-        drop = OptionMenu(self.root, clicked, *self.options, command=self.select_map)
-
-        rb1 = Button(self.root, text="Border Tile", background="light blue", command=lambda:self.callback(1))
-        rb2 = Button(self.root, text="Floor Tile", background="light blue", command=lambda:self.callback(2))
-        rb3 = Button(self.root, text="Start Tile", background="light blue", command=lambda: self.callback(3))
-        rb4 = Button(self.root, text="End Tile", background="light blue", command=lambda: self.callback(4))
-        rb5 = Button(self.root, text="Save", background="green", command=lambda: self.callback(5))
-        rb6 = Button(self.root, text="Quit", background="red", foreground='white', command=self.root.destroy)
-
-        lbl.pack(fill=X)
-        drop.pack(fill=X)
-        rb1.pack(fill=X, ipady=5)
-        rb2.pack(fill=X, ipady=5)
-        rb3.pack(fill=X, ipady=5)
-        rb4.pack(fill=X, ipady=5)
-        rb5.pack(fill=X, ipady=5)
-        rb6.pack(fill=X, ipady=5)
-
-        self.root.mainloop()
 
 
 def load_maps():
@@ -172,7 +107,6 @@ def main():
     colours = {'Border Tile': (245,205,222), 'Floor Tile': (251,247,213)}
 
     win = pygame.display.set_mode((800,600))
-    app = App(win, width, height)
 
     pygame.display.set_caption('Map Builder')
     selected_map = 'level_1.csv'
@@ -213,8 +147,6 @@ def main():
 
 
 if __name__ == "__main__":
-    x = 560
-    y = 240
-    os.environ['SDL_VIDEO_WINDOW_POS'] = '%d,%d' % (x,y)
+    # os.environ['SDL_VIDEO_WINDOW_POS'] = '%d,%d' % (x,y)
     pygame.init()
     main()

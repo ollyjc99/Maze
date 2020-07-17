@@ -3,39 +3,46 @@ import time
 import string
 import csv
 import os
-from tkinter import *
 from mapper import *
-import threading
-
-
-class App(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.start()
-
-    def quit(self):
-        self.root.quit()
-
-    def callback(self,v):
-        print(v)
-
-    def run(self):
-        self.root = Tk()
-        self.root.protocol("WM_DELETE_WINDOW", self.quit)
-
-        rb1 = Button(self.root, text="Border Tile", background="light blue", command=lambda:self.callback(1)).pack(fill=X, ipady=5)
-        rb2 = Button(self.root, text="Floor Tile", background="light blue", command=lambda:self.callback(1)).pack(fill=X, ipady=5)
-        rb3 = Button(self.root, text="Start Tile", background="light blue", command=lambda: self.callback(1)).pack(fill=X, ipady=5)
-        rb4 = Button(self.root, text="End Tile", background="light blue", command=lambda: self.callback(1)).pack(fill=X, ipady=5)
-        rb5 = Button(self.root, text="Quit", background="red", foreground='white', command=self.root.destroy).pack(fill=X, ipady=5)
-
-        self.root.mainloop()
-
+class text:
+    def __init__(self, font, text, textRect):
+        self.font = font
+        self.text = text
+        self.textRect = textRect
 
 def main():
-    colour_picker = (245,205,222)
-    app = App()
+    x = 800
+    y = 600
+
+    white = (255, 255, 255)
+    green = (0, 255, 0)
+    blue = (0, 0, 128)
+
+    win = pygame.display.set_mode((x, y))
+
+    pygame.display.set_caption('Show Text')
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render('GeeksForGeeks', True, green, blue)
+    textRect = text.get_rect()
+    textRect.center = (x // 2, y // 3)
+
+    while True:
+
+        win.fill(white)
+
+        win.blit(text, textRect)
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+
+                pygame.quit()
+
+                quit()
+
+            pygame.display.update()
 
 
 if __name__ == '__main__':
+    pygame.init()
     main()
