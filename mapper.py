@@ -55,18 +55,17 @@ def read_grid(filename='level_1.csv'):
     return new_grid, start, finish
 
 
-def save_grid(value):
+def save_grid(value, grid):
     filename = value + '.csv'
     current_maps = load_maps()
     if filename not in current_maps:
         current_maps.append(filename)
 
-        with open('maps/'+filename, 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerows(grid)
-        print('Saved map')
-
-    print(current_maps)
+    with open('maps/'+filename, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(grid)
+    print('Saved map')
+    return current_maps
 
 
 def draw_grid(win, width, height, map):
@@ -86,30 +85,16 @@ def paint(win, width, height, pos, button, map, colour):
                     col[0] = colour
                 if button == 3:
                     col[0] = (251,247,213)
-                if button == '32':
+                if button == 6:
                     col[0] = (235,225,200)
-                if button == 'f':
+                if button == 7:
                     col[0] = (200,255,200)
                 pygame.draw.rect(win, col[0], (col[1], col[2], width, height))
                 pygame.display.update()
 
 
-def colour_picker(value):
-    global colour
-    colours = {'Border Tile': (245, 205, 222), 'Floor Tile': (251, 247, 213)}
-
-    if value == 1:
-        colour = (245, 205, 222)
-    if value == 2:
-        colour = (251, 247, 213)
-    if value == 3:
-        colour = (235,225,200)
-    if value == 4:
-        colour = (200,255,200)
-
-
 def main():
-    global colour, grid, start, finish, file_saved
+    # global grid, start, finish
     maps = load_maps()
     colour = (245,205,222)
     width = 40
@@ -157,21 +142,13 @@ def main():
                 if event.key == pygame.K_2:
                     selected_map, load_map = change_map(maps, 'level_2.csv')
                 if event.key == pygame.K_3:
-                    selected_map, load_map = change_map(maps, 'level_2.csv')
+                    selected_map, load_map = change_map(maps, 'level_3.csv')
                 if event.key == pygame.K_4:
-                    selected_map, load_map = change_map(maps, 'level_2.csv')
-
-                if event.key == pygame.K_u:
-                    save_grid(input('Enter filename: '))
-                if event.key == pygame.K_i:
-                    save_grid(input('Enter filename: '))
-                if event.key == pygame.K_o:
-                    save_grid(input('Enter filename: '))
-                if event.key == pygame.K_p:
-                    save_grid(input('Enter filename: '))
+                    selected_map, load_map = change_map(maps, 'level_4.csv')
 
                 if event.key == pygame.K_s:
-                    save_grid(input('Enter filename: '))
+                    maps = save_grid(input('Enter filename: '), grid)
+
                 if event.key == pygame.K_r:
                     grid = [[[(251,247,213), x, y] for x in range(0, 800, 40)] for y in range(0, 600, 40)]
 

@@ -10,6 +10,8 @@ Things to debug
 2) Working on maps
 
 '''
+
+
 def command_handler(command):
     if command == '1':
         maps = []
@@ -28,7 +30,6 @@ def main():
         print('1) View maps')
         command = input('> ')
         command_handler(command)
-
 
 
 if __name__ == '__main__':
