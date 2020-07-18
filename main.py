@@ -2,6 +2,7 @@ import csv
 import pygame
 import time
 from mapper import *
+from itertools import cycle
 
 
 def main():
@@ -14,7 +15,9 @@ def main():
     pygame.display.set_caption('First Game')
     win.fill((245,205,222))
 
-    grid, start, finish = read_grid()
+    maps = iter(load_maps())
+    current_map = next(maps)
+    grid, start, finish = read_grid(current_map)
     draw_grid(win, width, height, grid)
     start_state = start
     final_state = finish
@@ -81,11 +84,21 @@ def main():
                         elif col[0] == (245,205,222):
                             pass
 
+        if (x,y) == final_state:
+            if current_map == 'level_4.csv':
+                running = False
+                print('FIN')
+            else:
+                current_map = next(maps)
+                grid, start, finish = read_grid(current_map)
+                start_state = start
+                final_state = finish
+                x, y = start
+
         draw_grid(win, width, height, grid)
         pygame.draw.rect(win, (204,225,242), (x, y, width, height))
         pygame.display.update()
-        if (x,y) == final_state:
-            running = False
+
         pygame.time.delay(100)
 
 
