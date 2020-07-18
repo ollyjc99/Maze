@@ -11,6 +11,18 @@ def load_maps():
     return maps
 
 
+def change_map(maps, selected_map):
+    found = False
+    for map in maps:
+        if map == selected_map:
+            found = True
+
+    if found:
+        return selected_map, True
+    else:
+        return selected_map, False
+
+
 def no_punct(text):
     no_punct = ""
     for char in text:
@@ -97,7 +109,7 @@ def colour_picker(value):
 
 
 def main():
-    global colour, grid, start, finish, selected_map, file_saved
+    global colour, grid, start, finish, file_saved
     maps = load_maps()
     colour = (245,205,222)
     width = 40
@@ -117,14 +129,13 @@ def main():
 
     running = True
     drawing = False
-    load_file = False
+    load_map = False
 
     x, y = start
     while running:
-        if load_file:
-            grid = read_grid()[0]
-            load_file = False
-        print(selected_map)
+        if load_map:
+            grid = read_grid(selected_map)[0]
+            load_map = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -139,6 +150,30 @@ def main():
                             paint(win, width, height, pygame.mouse.get_pos(), button, grid, colour)
                         if e.type == pygame.MOUSEBUTTONUP:
                             pressed = False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    selected_map, load_map = change_map(maps, 'level_1.csv')
+                if event.key == pygame.K_2:
+                    selected_map, load_map = change_map(maps, 'level_2.csv')
+                if event.key == pygame.K_3:
+                    selected_map, load_map = change_map(maps, 'level_2.csv')
+                if event.key == pygame.K_4:
+                    selected_map, load_map = change_map(maps, 'level_2.csv')
+
+                if event.key == pygame.K_u:
+                    save_grid(input('Enter filename: '))
+                if event.key == pygame.K_i:
+                    save_grid(input('Enter filename: '))
+                if event.key == pygame.K_o:
+                    save_grid(input('Enter filename: '))
+                if event.key == pygame.K_p:
+                    save_grid(input('Enter filename: '))
+
+                if event.key == pygame.K_s:
+                    save_grid(input('Enter filename: '))
+                if event.key == pygame.K_r:
+                    grid = [[[(251,247,213), x, y] for x in range(0, 800, 40)] for y in range(0, 600, 40)]
 
         draw_grid(win, width, height, grid)
         pygame.display.update()
