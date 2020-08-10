@@ -5,6 +5,27 @@ from mapper import *
 from itertools import cycle
 
 
+class Sprite(object):
+    def __init__(self, win, width, height):
+        self.win = win
+        self.x = 0
+        self.y = 0
+        self.width = 40
+        self.height = 40
+        self.velocity = 40
+
+    def move(self, key):
+        print(key)
+
+
+class Block(object):
+    def __init__(self, win, width, height, property):
+        self.win = win
+        self.width = width
+        self.height = height
+        self.property = property
+
+
 def main():
     width = 40
     height = 40
@@ -14,7 +35,7 @@ def main():
     win = pygame.display.set_mode((window_width,window_height))
     pygame.display.set_caption('First Game')
     win.fill((245,205,222))
-
+    clock = pygame.time.Clock()
     maps = iter(load_maps())
     current_map = next(maps)
     grid, start, finish = read_grid(current_map)
@@ -27,6 +48,7 @@ def main():
 
     running = True
     while running:
+        # clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
