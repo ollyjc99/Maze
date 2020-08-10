@@ -72,7 +72,6 @@ def draw_grid(win, width, height, map):
     for row in map:
         for col in row:
             pygame.draw.rect(win, col[0], (col[1], col[2], width, height))
-    print(map)
     pygame.display.update()
     return
 
