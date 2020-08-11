@@ -29,6 +29,7 @@ def main():
     boundary = Cube((0,0))
     boundary.draw()
 
+
 if __name__ == "__main__":
     time_start = time.perf_counter()
     pygame.init()
