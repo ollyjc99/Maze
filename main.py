@@ -9,11 +9,11 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((40, 40))
-        self.image.fill((0,120,255))
+        self.image.fill((244, 32, 105))
         self.rect = self.image.get_rect()
         self.rect.center = 250,250
-        self.xval = 60
-        self.yval = 60
+        self.xval = 5
+        self.yval = 5
 
     def update(self, win):
         w, h = win.get_size()
@@ -121,7 +121,7 @@ def main():
             pass
 
         all_sprites.update(win)
-        win.fill((245, 205, 222))
+        win.fill((180,212,85))
         all_sprites.draw(win)
         pygame.display.flip()
 
