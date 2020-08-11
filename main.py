@@ -12,12 +12,24 @@ class Player(pygame.sprite.Sprite):
         self.image.fill((0,120,255))
         self.rect = self.image.get_rect()
         self.rect.center = 250,250
+        self.xval = 60
+        self.yval = 60
 
     def update(self):
-        self.rect.x += 5
-        if self.rect.left > 800:
-            self.rect.right = 0
+        self.rect.x += self.xval
+        self.rect.y += self.yval
 
+        if self.rect.right > 800:
+            self.xval = -self.xval
+
+        if self.rect.left < 0:
+            self.xval = -self.xval
+
+        if self.rect.top < 0:
+            self.yval = -self.yval
+
+        if self.rect.bottom > 600:
+            self.yval = -self.yval
 
 
 class Map(object):
