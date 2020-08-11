@@ -5,28 +5,19 @@ from mapper import *
 from itertools import cycle
 
 
-class Sprite(object):
-    def __init__(self, win, width, height, colour):
-        self.win = win
-        self.x = 50
-        self.y = 50
-        self.width = width
-        self.height = height
-        self.colour = colour
-        self.velocity = 40
-        self.rect = pygame.Rect((self.x, self.y, self.width, self.height))
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((40, 40))
+        self.image.fill((0,120,255))
+        self.rect = self.image.get_rect()
+        self.rect.center = 250,250
 
-    def move(self, dirn, val):
-        if dirn == 'left' or dirn == 'right':
-            self.x += val
-        if dirn == 'up' or dirn == 'down':
-            self.y += val
+    def update(self):
+        self.rect.x += 5
+        if self.rect.left > 800:
+            self.rect.right = 0
 
-        self.rect = pygame.Rect((self.x, self.y, self.width, self.height))
-        self.draw()
-
-    def draw(self):
-        pygame.draw.rect(self.win, self.colour, self.rect)
 
 
 class Map(object):
@@ -64,7 +55,7 @@ def main():
     window_height = 600
     win = pygame.display.set_mode((window_width,window_height))
     pygame.display.set_caption('First Game')
-    win.fill((245,205,222))
+
     clock = pygame.time.Clock()
     maps = iter(load_maps())
     current_map = next(maps)
@@ -72,10 +63,13 @@ def main():
     start_state = start
     final_state = finish
 
-    player = Sprite(win, 30, 30, (0,120,255))
+    all_sprites = pygame.sprite.Group()
+    player = Player()
+    all_sprites.add(player)
     level_1 = Map(grid, start, finish)
     print(level_1.border)
-    draw_grid(win, width, height, grid)
+    # draw_grid(win, width, height, grid)
+
     x, y = start
 
     running = True
@@ -84,26 +78,19 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        # draw_grid(win, width, height, grid)
-        # player.draw()
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            if player.rect.collidelist(level_1.border) == -1:
-                draw_grid(win, width, height, grid)
-                player.move('left', -velocity)
+            pass
 
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            draw_grid(win, width, height, grid)
-            player.move('right', velocity)
+            pass
 
         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            draw_grid(win, width, height, grid)
-            player.move('up', -velocity)
+            pass
 
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            draw_grid(win, width, height, grid)
-            player.move('down', velocity)
+            pass
 
         if (x,y) == final_state:
             if current_map == 'level_4.csv':
@@ -117,8 +104,13 @@ def main():
                 x, y = start
 
         # pygame.time.delay(50)
-        pygame.display.update()
+        if player.rect.collidelist(level_1.border) == -1:
+            pass
 
+        all_sprites.update()
+        win.fill((245, 205, 222))
+        all_sprites.draw(win)
+        pygame.display.flip()
 
 
 if __name__ == "__main__":
