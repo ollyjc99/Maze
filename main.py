@@ -15,11 +15,12 @@ class Player(pygame.sprite.Sprite):
         self.xval = 60
         self.yval = 60
 
-    def update(self):
+    def update(self, win):
+        w, h = win.get_size()
         self.rect.x += self.xval
         self.rect.y += self.yval
 
-        if self.rect.right > 800:
+        if self.rect.right > w:
             self.xval = -self.xval
 
         if self.rect.left < 0:
@@ -28,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         if self.rect.top < 0:
             self.yval = -self.yval
 
-        if self.rect.bottom > 600:
+        if self.rect.bottom > h:
             self.yval = -self.yval
 
 
@@ -119,7 +120,7 @@ def main():
         if player.rect.collidelist(level_1.border) == -1:
             pass
 
-        all_sprites.update()
+        all_sprites.update(win)
         win.fill((245, 205, 222))
         all_sprites.draw(win)
         pygame.display.flip()
