@@ -3,6 +3,7 @@ import time
 import string
 import csv
 from mapper import *
+from main import Map
 import os
 '''
 Things to debug
@@ -23,8 +24,10 @@ def command_handler(command):
 
 def main():
     running = True
+    map_list = load_maps()
+    maps = [Map(*read_grid(level)) for level in map_list]
     while running:
-        os.system('cls')
+        # os.system('cls')
         print('Debugging Console')
         print('==================')
         print('1) View maps')

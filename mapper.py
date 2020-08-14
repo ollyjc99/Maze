@@ -34,8 +34,8 @@ def no_punct(text):
 def read_grid(filename='level_1.csv'):
     new_grid = []
     row = []
-    start = (0, 0)
-    finish = (800, 600)
+    start = 0, 0
+    finish = 800, 600
     with open('maps/'+filename, 'r') as csvfile:
         r = csv.reader(csvfile)
         for i in range(0, 15):
