@@ -1,3 +1,4 @@
+import os
 import csv
 import pygame
 import time
@@ -46,18 +47,17 @@ class Map(object):
         return border_points
 
 
-class Block(object):
-    def __init__(self, win, width, height, prop):
-        self.win = win
-        self.width = width
-        self.height = height
-        self.prop = prop
+class Block(pygame.sprite.Sprite):
+    def __init__(self, pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((40, 40))
+        self.image.fill((245,205,222))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = pos
 
-    def get_texture(self):
-        return None
+    def update(self, win):
+        print(self.rect)
 
-    def draw(self, pos):
-        pygame.draw.rect(self.win, (self.x, self.y, self.width, self.height))
 
 
 def main():
@@ -83,6 +83,10 @@ def main():
     print(level_1.border)
     # draw_grid(win, width, height, grid)
 
+    blocks = [Block((col[1], col[2])) for row in grid for col in row if col[0] == (245, 205, 222)]
+    level_border = pygame.sprite.Group()
+    for block in blocks:
+        level_border.add(block)
     x, y = start
 
     running = True
@@ -120,8 +124,10 @@ def main():
         if player.rect.collidelist(level_1.border) == -1:
             pass
 
+        level_border.update(win)
         all_sprites.update(win)
         win.fill((180,212,85))
+        level_border.draw(win)
         all_sprites.draw(win)
         pygame.display.flip()
 
