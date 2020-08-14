@@ -20,10 +20,10 @@ class Player(pygame.sprite.Sprite):
 
 
 class Block(pygame.sprite.Sprite):
-    def __init__(self, rect):
+    def __init__(self, rect, colour=(189, 0, 255)):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((40, 40))
-        self.image.fill((189, 0, 255))
+        self.image.fill(colour)
         self.rect = rect
 
 
@@ -37,27 +37,31 @@ class Map(object):
     def get_border(self):
         return [pygame.Rect(col[1], col[2], 40, 40) for row in self.grid for col in row if col[0] == (245, 205, 222)]
 
+
 def main():
     win = pygame.display.set_mode((800, 600))
     w, h = win.get_size()
     pygame.display.set_caption('First Game')
 
     clock = pygame.time.Clock()
+
     map_list = load_maps()
     maps = iter([Map(*read_grid(level)) for level in map_list])
     current_map = next(maps)
 
-    all_sprites = pygame.sprite.Group()
     player = Player()
+    all_sprites = pygame.sprite.Group()
     all_sprites.add(player)
+
     blocks = pygame.sprite.Group()
     for rect in current_map.border:
         blocks.add(Block(rect))
-    level_border = pygame.sprite.Group()
 
-    for block in blocks:
-        level_border.add(block)
-    x, y = current_map.start
+    start = Block(current_map.start, (240, 212, 217))
+    final = Block(current_map.final, (1, 255, 31))
+    blocks.add(start)
+    blocks.add(final)
+    player.rect.topleft = current_map.start
 
     running = True
     while running:
