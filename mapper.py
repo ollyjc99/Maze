@@ -52,7 +52,7 @@ def read_grid(filename='level_1.csv'):
                     finish = (int(values[3]), int(values[4]))
                 row.append(new_row)
     new_grid.append(row)
-    return new_grid, start, finish
+    return filename, new_grid, start, finish
 
 
 def save_grid(value, grid):

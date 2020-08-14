@@ -28,15 +28,21 @@ class Block(pygame.sprite.Sprite):
 
 
 class Map(object):
-    def __init__(self, grid, start, final):
+    def __init__(self, name, grid, start, final):
+        self.name = name
         self.grid = grid
-        self.start = start
-        self.final = final
+        self.start = self.get_start(start)
+        self.final = self.get_accept(final)
         self.border = self.get_border()
 
     def get_border(self):
         return [pygame.Rect(col[1], col[2], 40, 40) for row in self.grid for col in row if col[0] == (245, 205, 222)]
 
+    def get_start(self, start):
+        return pygame.Rect(*start, 40, 40)
+
+    def get_accept(self, final):
+        return pygame.Rect(*final, 40, 40)
 
 def main():
     win = pygame.display.set_mode((800, 600))
@@ -59,9 +65,11 @@ def main():
 
     start = Block(current_map.start, (240, 212, 217))
     final = Block(current_map.final, (1, 255, 31))
+
     blocks.add(start)
     blocks.add(final)
-    player.rect.topleft = current_map.start
+
+    player.rect.topleft = current_map.start.topleft
 
     running = True
     while running:
@@ -69,7 +77,6 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
         key = None
         keys = pygame.key.get_pressed()
 
@@ -79,7 +86,6 @@ def main():
 
             if not player.rect.collidelist(current_map.border) == -1:
                 player.rect.x += player.val
-
 
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             if not player.rect.right >= w:
@@ -102,19 +108,20 @@ def main():
             if not player.rect.collidelist(current_map.border) == -1:
                 player.rect.y -= player.val
 
-        if (player.rect.x, player.rect.y) == current_map.final:
-            if current_map == 'level_4.csv':
+        if player.rect.colliderect(final.rect):
+            if current_map.name == 'level_4.csv':
                 running = False
                 print('FIN')
             else:
                 current_map = next(maps)
-                start_state = current_map.start
-                final_state = current_map.final
-                x, y = current_map.start
-        print(player.rect)
-
-        if not player.rect.collidelist(current_map.border) == -1:
-            print('yeet')
+                blocks.empty()
+                start.rect.topleft = current_map.start.topleft
+                final.rect.topleft = current_map.final.topleft
+                blocks.add(start)
+                blocks.add(final)
+                for rect in current_map.border:
+                    blocks.add(Block(rect))
+                player.rect.topleft = start.rect.topleft
 
         # all_sprites.update(win)
         win.fill((245, 205, 222))
