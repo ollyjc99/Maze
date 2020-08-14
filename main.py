@@ -11,26 +11,11 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.Surface((40, 40))
         self.image.fill((0,120,255))
         self.rect = self.image.get_rect()
-        self.rect.center = 250,250
-        self.xval = 60
-        self.yval = 60
+        self.rect.center = 300,250
+        self.val = 10
 
     def update(self, win):
-        w, h = win.get_size()
-        self.rect.x += self.xval
-        self.rect.y += self.yval
-
-        if self.rect.right > w:
-            self.xval = -self.xval
-
-        if self.rect.left < 0:
-            self.xval = -self.xval
-
-        if self.rect.top < 0:
-            self.yval = -self.yval
-
-        if self.rect.bottom > h:
-            self.yval = -self.yval
+        pass
 
 
 class Map(object):
@@ -64,9 +49,9 @@ def main():
     width = 40
     height = 40
     velocity = 5
-    window_width = 800
-    window_height = 600
-    win = pygame.display.set_mode((window_width,window_height))
+    win_width = 800
+    win_height = 600
+    win = pygame.display.set_mode((win_width,win_height))
     pygame.display.set_caption('First Game')
 
     clock = pygame.time.Clock()
@@ -92,18 +77,24 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
+        key = None
         keys = pygame.key.get_pressed()
+
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            pass
+            if not player.rect.left <= 0:
+                player.rect.x -= player.val
 
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            pass
+            if not player.rect.right >= win_width:
+                player.rect.x += player.val
 
         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            pass
+            if not player.rect.top <= 0:
+                player.rect.y -= player.val
 
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            pass
+            if not player.rect.bottom >= win_height:
+                player.rect.y += player.val
 
         if (x,y) == final_state:
             if current_map == 'level_4.csv':
@@ -116,11 +107,10 @@ def main():
                 final_state = finish
                 x, y = start
 
-        # pygame.time.delay(50)
         if player.rect.collidelist(level_1.border) == -1:
             pass
 
-        all_sprites.update(win)
+        # all_sprites.update(win)
         win.fill((245, 205, 222))
         all_sprites.draw(win)
         pygame.display.flip()
