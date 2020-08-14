@@ -9,20 +9,11 @@ from itertools import cycle
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-<<<<<<< HEAD
-        self.image = pygame.Surface((40, 40))
-        self.image.fill((244, 32, 105))
-        self.rect = self.image.get_rect()
-        self.rect.center = 250,250
-        self.xval = 5
-        self.yval = 5
-=======
         self.image = pygame.Surface((30, 30))
         self.image.fill((0,120,255))
         self.rect = self.image.get_rect()
         self.rect.center = 300,250
         self.val = 5
->>>>>>> experimental
 
     def update(self, win):
         pass
@@ -44,27 +35,7 @@ class Map(object):
         self.border = self.get_border()
 
     def get_border(self):
-<<<<<<< HEAD
-        border_points = [pygame.Rect(col[1], col[2], 40, 40) for row in self.grid for col in row if col[0] == (245, 205, 222)]
-
-        return border_points
-
-
-class Block(pygame.sprite.Sprite):
-    def __init__(self, pos):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((40, 40))
-        self.image.fill((245,205,222))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = pos
-
-    def update(self, win):
-        print(self.rect)
-
-=======
         return [pygame.Rect(col[1], col[2], 40, 40) for row in self.grid for col in row if col[0] == (245, 205, 222)]
->>>>>>> experimental
-
 
 def main():
     win = pygame.display.set_mode((800, 600))
@@ -82,16 +53,11 @@ def main():
     blocks = pygame.sprite.Group()
     for rect in current_map.border:
         blocks.add(Block(rect))
-
-<<<<<<< HEAD
-    blocks = [Block((col[1], col[2])) for row in grid for col in row if col[0] == (245, 205, 222)]
     level_border = pygame.sprite.Group()
+
     for block in blocks:
         level_border.add(block)
-    x, y = start
-=======
     x, y = current_map.start
->>>>>>> experimental
 
     running = True
     while running:
@@ -138,32 +104,17 @@ def main():
                 print('FIN')
             else:
                 current_map = next(maps)
-<<<<<<< HEAD
-                grid, start, finish = read_grid(current_map)
-                start_state = start
-                final_state = finish
-                x, y = start
-
-        # pygame.time.delay(50)
-        if player.rect.collidelist(level_1.border) == -1:
-            pass
-
-        level_border.update(win)
-        all_sprites.update(win)
-        win.fill((180,212,85))
-        level_border.draw(win)
-=======
                 start_state = current_map.start
                 final_state = current_map.final
                 x, y = current_map.start
         print(player.rect)
+
         if not player.rect.collidelist(current_map.border) == -1:
             print('yeet')
 
         # all_sprites.update(win)
         win.fill((245, 205, 222))
         blocks.draw(win)
->>>>>>> experimental
         all_sprites.draw(win)
         pygame.display.flip()
 
