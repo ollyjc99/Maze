@@ -22,6 +22,7 @@ class Block(pygame.sprite.Sprite):
     def __init__(self, rect):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((40, 40))
+        self.image.fill((189, 0, 255))
         self.rect = rect
 
 
@@ -69,17 +70,30 @@ def main():
             if not player.rect.left <= 0:
                 player.rect.x -= player.val
 
+            if not player.rect.collidelist(current_map.border) == -1:
+                player.rect.x += player.val
+
+
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             if not player.rect.right >= w:
                 player.rect.x += player.val
+
+            if not player.rect.collidelist(current_map.border) == -1:
+                player.rect.x -= player.val
 
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             if not player.rect.top <= 0:
                 player.rect.y -= player.val
 
+            if not player.rect.collidelist(current_map.border) == -1:
+                player.rect.y += player.val
+
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             if not player.rect.bottom >= h:
                 player.rect.y += player.val
+
+            if not player.rect.collidelist(current_map.border) == -1:
+                player.rect.y -= player.val
 
         if (player.rect.x, player.rect.y) == current_map.final:
             if current_map == 'level_4.csv':
@@ -91,8 +105,8 @@ def main():
                 final_state = current_map.final
                 x, y = current_map.start
         print(player.rect)
-        # if player.rect.collidelist(level_1.border) == -1:
-        #     pass
+        if not player.rect.collidelist(current_map.border) == -1:
+            print('yeet')
 
         # all_sprites.update(win)
         win.fill((245, 205, 222))
