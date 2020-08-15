@@ -76,9 +76,9 @@ def draw_grid(win, width, height, map):
     return
 
 
-def paint(win, width, height, pos, button, map, colour):
+def paint(win, width, height, pos, button, grid, colour):
     selected_square = pos
-    for row in map:
+    for row in grid:
         for col in row:
             if pygame.Rect(col[1], col[2], width, height).collidepoint(pygame.mouse.get_pos()):
                 if button == 1:
@@ -99,7 +99,6 @@ def main():
     colour = (245,205,222)
     width = 40
     height = 40
-    velocity = 40
 
     colours = {'Border Tile': (245,205,222), 'Floor Tile': (251,247,213)}
 
@@ -136,6 +135,7 @@ def main():
                             paint(win, width, height, pygame.mouse.get_pos(), button, grid, colour)
                         if e.type == pygame.MOUSEBUTTONUP:
                             pressed = False
+                            break
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
