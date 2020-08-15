@@ -107,7 +107,8 @@ def main():
 
     pygame.display.set_caption('Map Builder')
     selected_map = 'level_1.csv'
-    grid, start, finish = read_grid(selected_map)
+    filename, grid, start, finish = read_grid(selected_map)
+    print(read_grid(selected_map))
     win.fill((0, 0, 0))
     draw_grid(win, width, height, grid)
     selected = (0,0)
@@ -119,7 +120,7 @@ def main():
     x, y = start
     while running:
         if load_map:
-            grid = read_grid(selected_map)[0]
+            grid = read_grid(selected_map)[1]
             load_map = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -159,6 +160,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # os.environ['SDL_VIDEO_WINDOW_POS'] = '%d,%d' % (x,y)
     pygame.init()
     main()
