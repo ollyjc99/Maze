@@ -10,7 +10,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((30, 30))
-        self.image.fill((0,120,255))
+        self.image.fill((0, 120, 255))
         self.rect = self.image.get_rect()
         self.rect.center = 300,250
         self.val = 5
@@ -73,6 +73,7 @@ class Map(object):
     def get_accept(self, final):
         return pygame.Rect(*final, 40, 40)
 
+
 def main():
     win = pygame.display.set_mode((800, 600))
     w, h = win.get_size()
@@ -125,7 +126,7 @@ def main():
         all_sprites.draw(win)
         pygame.display.flip()
 
-
+print(__name__)
 if __name__ == "__main__":
     time_start = time.perf_counter()
     pygame.init()
