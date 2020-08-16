@@ -15,8 +15,37 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = 300,250
         self.val = 5
 
-    def update(self, win):
-        pass
+    def update(self, win, border):
+        w, h = win.get_size()
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            if not self.rect.left <= 0:
+                self.rect.x -= self.val
+
+            if not self.rect.collidelist(border) == -1:
+                self.rect.x += self.val
+
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            if not self.rect.right >= w:
+                self.rect.x += self.val
+
+            if not self.rect.collidelist(border) == -1:
+                self.rect.x -= self.val
+
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            if not self.rect.top <= 0:
+                self.rect.y -= self.val
+
+            if not self.rect.collidelist(border) == -1:
+                self.rect.y += self.val
+
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            if not self.rect.bottom >= h:
+                self.rect.y += self.val
+
+            if not self.rect.collidelist(border) == -1:
+                self.rect.y -= self.val
 
 
 class Block(pygame.sprite.Sprite):
@@ -63,10 +92,8 @@ def main():
     for rect in current_map.border:
         blocks.add(Block(rect))
 
-    start = Block(current_map.start, (240, 212, 217))
     final = Block(current_map.final, (1, 255, 31))
 
-    blocks.add(start)
     blocks.add(final)
 
     player.rect.topleft = current_map.start.topleft
@@ -77,36 +104,6 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        key = None
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            if not player.rect.left <= 0:
-                player.rect.x -= player.val
-
-            if not player.rect.collidelist(current_map.border) == -1:
-                player.rect.x += player.val
-
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            if not player.rect.right >= w:
-                player.rect.x += player.val
-
-            if not player.rect.collidelist(current_map.border) == -1:
-                player.rect.x -= player.val
-
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
-            if not player.rect.top <= 0:
-                player.rect.y -= player.val
-
-            if not player.rect.collidelist(current_map.border) == -1:
-                player.rect.y += player.val
-
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            if not player.rect.bottom >= h:
-                player.rect.y += player.val
-
-            if not player.rect.collidelist(current_map.border) == -1:
-                player.rect.y -= player.val
 
         if player.rect.colliderect(final.rect):
             if current_map.name == 'level_4.csv':
@@ -115,17 +112,16 @@ def main():
             else:
                 current_map = next(maps)
                 blocks.empty()
-                start.rect.topleft = current_map.start.topleft
                 final.rect.topleft = current_map.final.topleft
-                blocks.add(start)
                 blocks.add(final)
                 for rect in current_map.border:
                     blocks.add(Block(rect))
-                player.rect.topleft = start.rect.topleft
+                player.rect.topleft = current_map.start.topleft
 
         # all_sprites.update(win)
-        win.fill((245, 205, 222))
+        win.fill((253, 253, 150))
         blocks.draw(win)
+        all_sprites.update(win, current_map.border)
         all_sprites.draw(win)
         pygame.display.flip()
 
