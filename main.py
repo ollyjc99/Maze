@@ -119,14 +119,13 @@ def main():
                     blocks.add(Block(rect))
                 player.rect.topleft = current_map.start.topleft
 
-        # all_sprites.update(win)
         win.fill((253, 253, 150))
         blocks.draw(win)
         all_sprites.update(win, current_map.border)
         all_sprites.draw(win)
         pygame.display.flip()
 
-print(__name__)
+
 if __name__ == "__main__":
     time_start = time.perf_counter()
     pygame.init()
